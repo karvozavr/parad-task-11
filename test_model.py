@@ -7,8 +7,6 @@ from unittest.mock import patch
 from yat.model import *
 
 
-# Scope tests
-
 class TestScope:
     def test_scope_set(self):
         s = Scope()
@@ -32,8 +30,6 @@ class TestScope:
         assert main['a'].value == 1
 
 
-# Number tests
-
 class TestNumber:
     def test_number_value(self):
         assert Number(7).value == 7
@@ -41,8 +37,6 @@ class TestNumber:
     def test_number_evaluate(self):
         assert Number(7).evaluate(Scope()).value == 7
 
-
-# BinaryOperation tests
 
 class TestBinOp:
     def test_bin_op_all(self):
@@ -111,8 +105,6 @@ class TestBinOp:
                              Number(1))).evaluate(Scope()).value == 27
 
 
-# UnaryOperation tests
-
 class TestUnOp:
     def test_un_op_all(self):
         un_op = UnaryOperation
@@ -140,14 +132,11 @@ class TestUnOp:
                                         Number(1)))).evaluate(Scope()).value == -27
 
 
-# Reference tests
-
 class ReferenceTests:
     def test_reference(self):
         main = Scope()
         main['a'] = Number(5)
         assert Reference('a').evaluate(main).value == 5
-
 
     def test_reference_parent(self):
         main = Scope()
@@ -155,8 +144,6 @@ class ReferenceTests:
         main['a'] = Number(5)
         assert Reference('a').evaluate(child).value == 5
 
-
-# Functions test
 
 class TestFunction:
     def test_func_base(self):
@@ -169,7 +156,6 @@ class TestFunction:
                             [Number(5),
                              UnaryOperation('-',
                                             Number(3))]).evaluate(main).value == 2
-
 
     def test_func_in_func(self):
         f_def = FunctionDefinition
@@ -210,7 +196,6 @@ class TestFunction:
         assert FunctionCall(f_def('new_bar', main['new_bar']),
                             []).evaluate(main).value == 20
 
-
     def test_func_def(self):
         main = Scope()
         f_def = FunctionDefinition(
@@ -222,7 +207,6 @@ class TestFunction:
                      )
         )
         assert FunctionCall(f_def, [Number(25)]).evaluate(main).value == 25
-
 
     def test_func_call(self):
         main = Scope()
@@ -239,8 +223,6 @@ class TestFunction:
         assert Reference('arg').evaluate(main).value == 1
 
 
-# Conditional test
-
 class TestConditional:
     def test_cond_base(self):
         # if condition is not Number(0) it's true
@@ -250,13 +232,11 @@ class TestConditional:
         assert Conditional(Number(3), [Number(1)],
                            [Number(2)]).evaluate(main).value == 1
 
-
     def test_cond_in_func(self):
         for a in range(-10, 10):
             for b in range(-10, 10):
                 for c in range(-10, 10):
                     self._helper_test_cond(a, b, c, c if a + b == c else -1)
-
 
     def _helper_test_cond(self, a, b, c, res):
         bin_op = BinaryOperation
@@ -300,13 +280,13 @@ class TestConditional:
                                     Read('third')
                                 ]).evaluate(main).value == res
 
+
 class TestRead:
     def test_read_base(self):
         st = str(7)
         with patch('sys.stdin', StringIO(st)):
             main = Scope()
             assert Read('b').evaluate(main).value == 7
-
 
     def test_read_scope(self):
         st = str(7)
