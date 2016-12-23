@@ -17,13 +17,13 @@ class TestScope:
     def test_scope_set(self):
         s = Scope()
         s['a'] = Number(7)
-        assert get_value(s['a']) == get_value(Number(7))
+        assert get_value(s['a']) == 7
 
     def test_scope_get_from_parent(self, monkeypatch):
         parent = Scope()
         child = Scope(parent)
         parent['a'] = Number(7)
-        assert get_value(child['a']) == get_value(Number(7))
+        assert get_value(child['a']) == 7
 
 
 class TestNumber:
@@ -224,7 +224,8 @@ class TestFunction:
                      ]
                      )
         )
-        FunctionCall(f_def, [Number(25)]).evaluate(parent)
+        assert get_value(FunctionCall(f_def,
+                                      [Number(25)]).evaluate(parent)) == 25
         assert get_value(Reference('arg').evaluate(parent)) == 1
 
 
@@ -249,18 +250,18 @@ class TestConditional:
 
 
 class TestRead:
-    def test_read_base(self):
-        st = str(7)
-        with patch('sys.stdin', StringIO(st)):
-            parent = Scope()
-            assert get_value(Read('b').evaluate(parent)) == 7
+    def test_read_base(self, monkeypatch):
+        st = '7'
+        monkeypatch.setattr(sys, 'stdin', StringIO(st))
+        parent = Scope()
+        assert get_value(Read('b').evaluate(parent)) == 7
 
-    def test_read_scope(self):
-        st = str(7)
-        with patch('sys.stdin', StringIO(st)):
-            parent = Scope()
-            Read('a').evaluate(parent)
-            assert get_value(parent['a']) == 7
+    def test_read_scope(self, monkeypatch):
+        st = '7'
+        monkeypatch.setattr(sys, 'stdin', StringIO(st))
+        parent = Scope()
+        Read('a').evaluate(parent)
+        assert get_value(parent['a']) == 7
 
 
 class TestPrint:
