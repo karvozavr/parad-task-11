@@ -232,11 +232,12 @@ class TestConditional:
     def test_cond_base(self):
         # if condition is not Number(0) it's true
         parent = Scope()
-        assert Conditional(Number(0), [Number(1)],
-                           [Number(2)]).evaluate(parent).value == 2
-        assert Conditional(Number(1), [Number(1)]).evaluate(parent).value == 1
-        assert Conditional(Number(3), [Number(1)],
-                           [Number(2)]).evaluate(parent).value == 1
+        assert get_value(Conditional(Number(0), [Number(1)],
+                                     [Number(2)]).evaluate(parent)) == 2
+        assert get_value(Conditional(Number(1),
+                                     [Number(1)]).evaluate(parent)) == 1
+        assert get_value(Conditional(Number(3), [Number(1)],
+                                     [Number(2)]).evaluate(parent)) == 1
 
     def test_cond_empty(self):
         parent = Scope()
